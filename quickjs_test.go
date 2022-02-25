@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+
 func TestObject(t *testing.T) {
 	runtime := NewRuntime()
 	defer runtime.Free()

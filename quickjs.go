@@ -371,7 +371,9 @@ func (ctx *Context) Atom(v string) Atom {
 	return Atom{ctx: ctx, ref: C.JS_NewAtom(ctx.ref, ptr)}
 }
 
-func (ctx *Context) eval(code string) Value { return ctx.evalFile(code, 0, "<code>") }
+func (ctx *Context) eval(code string) Value {
+	return ctx.evalFile(code, 0, "<code>")
+}
 
 func (ctx *Context) evalFile(code string, evaltype int, filename string) Value {
 	codePtr := C.CString(code)
@@ -490,6 +492,14 @@ func (ctx *Context) StdHelper() {
 
 func (ctx *Context) StdDumpError() {
 	C.js_std_dump_error(ctx.ref)
+}
+
+func (ctx *Context) RunFile(filename string, evaltype int) int {
+	filenamePtr := C.CString(filename)
+	defer C.free(unsafe.Pointer(filenamePtr))
+
+	rst :=  C.eval_file(ctx.ref, filenamePtr, C.int(evaltype))
+	return int(rst)
 }
 
 type Atom struct {

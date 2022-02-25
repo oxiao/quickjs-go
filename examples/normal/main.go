@@ -20,7 +20,7 @@ func check(err error) {
 	}
 }
 
-func main() {
+func test()  {
 	runtime := quickjs.NewRuntime()
 	defer runtime.Free()
 
@@ -28,7 +28,45 @@ func main() {
 	defer context.Free()
 
 	globals := context.Globals()
+	globals.Set("hlw", context.String("世界大"))
+	// Test evaluating template strings.
+	rst := context.RunFile("/mydata/mytest/qjs/qjhello.js", quickjs.EVAL_MODULE)
+	fmt.Println(globals.Get("rr"), rst)
 
+	return
+
+	names, err := globals.PropertyNames()
+	check(err)
+
+	fmt.Println("Globals:")
+	for _, name := range names {
+		val := globals.GetByAtom(name.Atom)
+		defer val.Free()
+
+		fmt.Printf("'%s': %s\n", name, val)
+	}
+	fmt.Println()
+
+}
+
+func main() {
+
+	runtime := quickjs.NewRuntime()
+	defer runtime.Free()
+
+	context := runtime.NewContext()
+	defer context.Free()
+
+	globals := context.Globals()
+	globals.Set("hlw", context.String("世界大"))
+	// Test evaluating template strings.
+
+	test()
+	//result, err := context.EvalFile("", quickjs.EVAL_GLOBAL,"/mydata/mytest/qjs/qjhello.js")
+	//fmt.Println(globals.Get("test"), globals.Get("html"))
+
+
+	return
 	// Test evaluating template strings.
 
 	result, err := context.Eval("`Hello world! 2 ** 8 = ${2 ** 8}.`", quickjs.EVAL_GLOBAL)
